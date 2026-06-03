@@ -1,97 +1,12 @@
-import os
 import numpy as np
 import torch
-from pathlib import Path
+from datetime import datetime, timezone
 from typing import Callable, Optional, List, Union
 
 from tensorform.audio.mel import MelSpectrogramOperator
+from tensorform.bench.audio._io import _load_wav
 from tensorform.bench.core import BenchmarkSuite, BenchmarkReport
-
-
-def _load_wav(path: str, target_sr: int = 16000) -> np.ndarray:
-    """
-    Loads a WAV file and returns a mono float32 array, resampling if needed.
-
-    Parameters
-    ----------
-    path : str
-        Absolute or relative path to a ``.wav`` file.
-    target_sr : int
-        Target sample rate in Hz. Resampling is applied when the file sample
-        rate differs from this value.
-
-    Returns
-    -------
-    np.ndarray
-        Mono float32 waveform normalized to ``[-1, 1]``.
-    """
-    try:
-        from scipy.io import wavfile
-        from scipy.signal import resample_poly
-        from math import gcd
-    except ImportError as exc:
-        raise ImportError(
-            "scipy is required for WAV loading: pip install scipy"
-        ) from exc
-
-    sr, data = wavfile.read(path)
-
-    # Convert to float32 in [-1, 1]
-    if data.dtype == np.int16:
-        data = data.astype(np.float32) / 32768.0
-    elif data.dtype == np.int32:
-        data = data.astype(np.float32) / 2147483648.0
-    elif data.dtype == np.uint8:
-        data = (data.astype(np.float32) - 128.0) / 128.0
-    else:
-        data = data.astype(np.float32)
-
-    # Downmix to mono
-    if data.ndim > 1:
-        data = data.mean(axis=1)
-
-    # Resample if needed
-    if sr != target_sr:
-        g = gcd(target_sr, sr)
-        data = resample_poly(data, target_sr // g, sr // g).astype(np.float32)
-
-    return data
-
-
-def collect_wav_trials(
-    root_dir: str,
-    max_files: Optional[int] = None,
-    target_sr: int = 16000,
-) -> List[np.ndarray]:
-    """
-    Recursively collects WAV files from a directory tree and loads them.
-
-    Parameters
-    ----------
-    root_dir : str
-        Root directory to search (e.g. ``celeb_vox/wav``).
-    max_files : int, optional
-        Maximum number of files to load. Loads all when ``None``.
-    target_sr : int
-        Target sample rate passed to the WAV loader.
-
-    Returns
-    -------
-    List[np.ndarray]
-        Loaded float32 waveform arrays, ready for benchmarking.
-    """
-    paths = sorted(Path(root_dir).rglob("*.wav"))
-    if max_files is not None:
-        paths = paths[:max_files]
-
-    trials = []
-    for p in paths:
-        try:
-            trials.append(_load_wav(str(p), target_sr=target_sr))
-        except Exception as exc:
-            print(f"[warn] skipping {p}: {exc}")
-
-    return trials
+from tensorform._device import detect_device
 
 
 def melspectrogram(
@@ -141,12 +56,7 @@ def melspectrogram(
     BenchmarkReport
         Aggregated latency, energy, and fidelity metrics across all trials.
     """
-    if hasattr(torch, "mps") and torch.mps.is_available():
-        default_device = "mps"
-    elif torch.cuda.is_available():
-        default_device = "cuda"
-    else:
-        default_device = "cpu"
+    default_device = detect_device()
 
     if legacy_fn is None or accelerate_fn is None:
         default_operator = MelSpectrogramOperator(
@@ -159,6 +69,7 @@ def melspectrogram(
         legacy_fn = legacy_fn or default_operator.legacy_reference
         accelerate_fn = accelerate_fn or default_operator.accelerate
 
+    started_at = datetime.now(timezone.utc).astimezone().strftime("%Y-%m-%d %H:%M:%S %Z")
     legacy_trials_results = []
     accel_trials_results = []
 
@@ -179,7 +90,6 @@ def melspectrogram(
         legacy_meta = BenchmarkSuite.profile_execution(
             legacy_fn, signal_np, iterations=iterations, warmup=warmup, device_type="cpu"
         )
-
         accel_meta = BenchmarkSuite.profile_execution(
             accelerate_fn, signal_tensor, iterations=iterations, warmup=warmup, device_type=default_device
         )
@@ -187,4 +97,4 @@ def melspectrogram(
         legacy_trials_results.append(legacy_meta)
         accel_trials_results.append(accel_meta)
 
-    return BenchmarkReport(legacy_trials_results, accel_trials_results)
+    return BenchmarkReport(legacy_trials_results, accel_trials_results, started_at=started_at)

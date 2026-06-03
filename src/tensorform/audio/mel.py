@@ -2,6 +2,8 @@ import numpy as np
 import torch
 from typing import Optional
 
+from tensorform._device import detect_device
+
 class MelSpectrogramOperator:
     """
     Hardware-Aligned Computational (HAC) of the Mel Spectrogram.
@@ -24,16 +26,12 @@ class MelSpectrogramOperator:
         self.n_mels = n_mels
         
         if device is None:
-            if hasattr(torch, "mps") and torch.mps.is_available():
-                self.device = torch.device("mps")
-            elif torch.cuda.is_available():
-                self.device = torch.device("cuda")
-            else:
-                self.device = torch.device("cpu")
+            self.device = torch.device(detect_device())
         else:
             self.device = torch.device(device)
             
-        self.mel_fb_tensor = torch.from_numpy(self._generate_mel_fb()).float().to(self.device)
+        self._mel_fb_np = self._generate_mel_fb().astype(np.float32)  # float32 for legacy/HAC parity
+        self.mel_fb_tensor = torch.from_numpy(self._mel_fb_np).to(self.device)
 
     def _generate_mel_fb(self) -> np.ndarray:
         """Generates a standard Mel filter bank matrix on the CPU."""
@@ -71,7 +69,7 @@ class MelSpectrogramOperator:
             fft_res = np.fft.rfft(frame, n=self.n_fft)
             fft_segments[i] = np.abs(fft_res).astype(np.float32) ** 2
 
-        return np.dot(fft_segments, self._generate_mel_fb().astype(np.float32))
+        return np.dot(fft_segments, self._mel_fb_np)
 
     def accelerate(self, signal_tensor: torch.Tensor) -> torch.Tensor:
         """

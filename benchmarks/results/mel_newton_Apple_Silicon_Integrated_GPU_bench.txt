@@ -1,0 +1,56 @@
+
+===========================================================================
+ AGGREGATED BENCHMARK REPORT (50 Evaluation Trials) 
+ Operator: tform.audio.melspectrogram — CelebVox 
+===========================================================================
+ SYSTEM ENVIRONMENT METADATA:
+  ├─ Hostname:                newton
+  ├─ Started:                 2026-06-03 03:10:20 -03
+  ├─ Finished:                2026-06-03 03:10:26 -03
+  ├─ Timezone:                -03 (UTC-0300)
+  ├─ OS:                      Darwin 25.3.0
+  ├─ Host CPU Model:          arm (12 Cores)
+  ├─ Target Accelerator:      Apple Silicon Integrated GPU
+  ├─ TensorForm:              0.1.0-alpha.1
+  ├─ Python:                  3.11.15
+  ├─ PyTorch:                 2.12.0
+  └─ NumPy:                   2.4.6
+---------------------------------------------------------------------------
+ EXECUTION LATENCY (Cross-Trial Mean ± SD):
+  ├─ Legacy CPU Reference:    3.6243 ± 1.68 ms
+  ├─ Accelerator-Native:      0.7001 ± 0.17 ms
+  └─ Sustained Speedup:       5.18x
+---------------------------------------------------------------------------
+ ENERGY EFFICIENCY (Mean per Trial):
+  ├─ Legacy CPU Reference:    163.0931 mJ
+  ├─ Accelerator-Native:      10.5012 mJ
+  └─ Energy Efficiency Gain:  15.53x less energy consumed
+---------------------------------------------------------------------------
+ MATHEMATICAL FIDELITY ACCUMULATED:
+  ├─ Mean Cosine Similarity:  1.00000000
+  └─ Worst-Case Abs Error:    3.66210938e-04
+---------------------------------------------------------------------------
+ DATASET STATISTICS:
+  ├─ Source:              /Users/augustocamargo/Projects/MelFTF/dataset/celeb_vox/wav
+  ├─ Files:               50
+  ├─ Duration (s):        6.92 ± 3.04
+  └─ Size (float32):      432.6 KB ± 189.7 KB
+---------------------------------------------------------------------------
+ PRIOR ART CONTEXT (reported speedups — methodology differs):
+  ┆  Hardware, batch size, and reference baseline vary across works.
+  ┆  TensorForm reports per-trial single-utterance latency on MPS/CUDA.
+  ├─ nnAudio [IEEE Access 2020]      ~1200x   Mel, Tesla V100, batch=1770 files
+  ├─ kapre   [ICML 2017]             ~10-100x Mel, TensorFlow GPU, batch
+  ├─ torchlibrosa                    ~10x     Mel, CUDA, batch training
+  └─ Tacotron2/BigVGAN (NVIDIA)      N/A      mel_basis@stft precomputed, production
+---------------------------------------------------------------------------
+ RUN CONFIGURATION (reproduce with these parameters):
+  ├─ dataset                    /Users/augustocamargo/Projects/MelFTF/dataset/celeb_vox/wav
+  ├─ num_trials                 50
+  ├─ iterations                 20
+  ├─ warmup                     5
+  ├─ sample_rate                16000
+  ├─ n_fft                      512
+  ├─ hop_length                 160
+  └─ n_mels                     26
+===========================================================================
