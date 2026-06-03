@@ -1,0 +1,35 @@
+Metadata-Version: 2.4
+Name: tensorform
+Version: 0.1.0a1
+Summary: Hardware-Aligned Computational Reformulation (HACR) for Scientific Pipelines
+Author-email: Augusto Cesar de Camargo Neto <augusto.camargo@bluecore.it>
+License: MIT
+Project-URL: Homepage, https://github.com/augustocamargo/TensorForm
+Project-URL: Documentation, https://github.com/augustocamargo/TensorForm/docs
+Project-URL: Repository, https://github.com/augustocamargo/TensorForm.git
+Project-URL: Issues, https://github.com/augustocamargo/TensorForm/issues
+Keywords: hacr,accelerator-native,tensor,hpc,signal-processing,mps,cuda
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Operating System :: OS Independent
+Classifier: Topic :: Scientific/Engineering
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: torch>=2.0.0
+Requires-Dist: numpy>=1.22.0
+Requires-Dist: psutil>=5.9.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0.0; extra == "dev"
+Requires-Dist: black>=23.0.0; extra == "dev"
+Requires-Dist: flake8>=6.0.0; extra == "dev"
+Provides-Extra: nvidia
+Requires-Dist: pynvml>=11.5.0; extra == "nvidia"
