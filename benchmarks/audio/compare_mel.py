@@ -118,40 +118,67 @@ def run_comparison(trials, tensors, tensors_batched, args):
     except ImportError:
         print("  [–] nnAudio not installed  →  pip install nnAudio")
 
-    # ── TensorForm ────────────────────────────────────────────────────────────
-    from tensorform.audio.mel import MelSpectrogramOperator
-    op = MelSpectrogramOperator(sample_rate=sr, n_fft=n_fft, hop_length=hop, n_mels=n_mels)
+    # ── TensorForm MelT (Direct Mel Projection — no STFT) ────────────────────
+    from tensorform.audio.melt import MelTOperator
+    op = MelTOperator(sample_rate=sr, n_fft=n_fft, hop_length=hop, n_mels=n_mels)
     ms, ss = zip(*[measure(op.accelerate, t, iterations=N, warmup=W) for t in tensors])
-    results[f"TensorForm       ({DEVICE.upper()})"] = (np.mean(ms), np.mean(ss))
-    print(f"  [✓] TensorForm")
+    results[f"TensorForm MelT  ({DEVICE.upper()})"] = (np.mean(ms), np.mean(ss))
+    print(f"  [✓] TensorForm MelT  (Direct Mel Projection — no STFT)")
 
     return results
 
 
-def print_table(results, args, dataset_stats):
+def _format_table(results, args, dataset_stats) -> str:
+    import socket, re
     W = 65
     tf_key = next(k for k in results if "TensorForm" in k)
     lib_key = next((k for k in results if "librosa" in k), None)
-
-    print(f"\n{'='*W}")
-    print(f"  MEL SPECTROGRAM — {dataset_stats['n_files']} files × {args.iterations} iterations")
-    print(f"  Duration: {dataset_stats['duration_mean_s']:.2f} ± {dataset_stats['duration_std_s']:.2f} s  |  "
-          f"Size: {dataset_stats['size_mean']} ± {dataset_stats['size_std']}")
-    print(f"  n_fft={args.n_fft}  hop={args.hop_length}  n_mels={args.n_mels}  device={DEVICE.upper()}")
-    print(f"{'='*W}")
-    print(f"  {'Implementation':<32} {'Mean (ms)':>10}  {'SD':>7}  {'vs TF':>8}")
-    print(f"  {'-'*(W-2)}")
-
     tf_mean = results[tf_key][0]
 
+    lines = [
+        "",
+        "=" * W,
+        f"  MEL SPECTROGRAM — {dataset_stats['n_files']} files × {args.iterations} iterations",
+        f"  Source:   {dataset_stats.get('source', 'N/A')}",
+        f"  Duration: {dataset_stats['duration_mean_s']:.2f} ± {dataset_stats['duration_std_s']:.2f} s  |  "
+        f"Size: {dataset_stats['size_mean']} ± {dataset_stats['size_std']}",
+        f"  n_fft={args.n_fft}  hop={args.hop_length}  n_mels={args.n_mels}  device={DEVICE.upper()}",
+        f"  Baselines: STFT+Mel  |  TensorForm: Direct Mel Projection (no STFT)",
+        "=" * W,
+        f"  {'Implementation':<32} {'Mean (ms)':>10}  {'SD':>7}  {'vs TF':>8}",
+        f"  {'-'*(W-2)}",
+    ]
     for name, (mean, std) in sorted(results.items(), key=lambda x: x[1][0], reverse=True):
         ratio = f"{mean/tf_mean:.1f}x" if name != tf_key else "  —"
-        print(f"  {name:<32} {mean:>10.4f}  {std:>7.4f}  {ratio:>8}")
-
+        lines.append(f"  {name:<32} {mean:>10.4f}  {std:>7.4f}  {ratio:>8}")
     if lib_key:
-        lib_mean = results[lib_key][0]
-        print(f"\n  TensorForm speedup vs librosa: {lib_mean/tf_mean:.2f}x")
-    print(f"{'='*W}\n")
+        lines.append(f"\n  TensorForm MelT speedup vs librosa (STFT+Mel): {results[lib_key][0]/tf_mean:.2f}x")
+    lines += ["=" * W, ""]
+    return "\n".join(lines)
+
+
+def print_table(results, args, dataset_stats):
+    print(_format_table(results, args, dataset_stats))
+
+
+def save_table(results, args, dataset_stats,
+               output_dir: str = None) -> str:
+    import socket, re
+    from pathlib import Path
+
+    hostname = socket.gethostname().split(".")[0]
+    accel_slug = re.sub(r"[^A-Za-z0-9_\-]", "_", DEVICE).strip("_")
+    filename = f"compare_mel_{hostname}_{accel_slug}_bench.txt"
+
+    if output_dir is None:
+        output_dir = str(Path(__file__).resolve().parents[2] / "benchmarks" / "results")
+
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
+    filepath = Path(output_dir) / filename
+    with filepath.open("w", encoding="utf-8") as fh:
+        fh.write(_format_table(results, args, dataset_stats))
+    print(f"  → saved to {filepath}")
+    return str(filepath)
 
 
 def main():
@@ -183,6 +210,7 @@ def main():
     print("Profiling implementations...\n")
     results = run_comparison(trials, tensors, tensors_batched, args)
     print_table(results, args, dataset_stats)
+    save_table(results, args, dataset_stats)
 
 
 if __name__ == "__main__":

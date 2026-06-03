@@ -1,0 +1,49 @@
+
+===========================================================================
+ BENCHMARK — tform.audio.melt  (Direct Mel Projection)
+===========================================================================
+ SYSTEM ENVIRONMENT:
+  ├─ Hostname:                newton
+  ├─ Started:                 2026-06-03 04:59:39 -03
+  ├─ Finished:                2026-06-03 04:59:44 -03
+  ├─ Timezone:                -03 (UTC-0300)
+  ├─ OS:                      Darwin 25.3.0
+  ├─ CPU:                     arm (12 Cores)
+  ├─ Accelerator:             Apple Silicon Integrated GPU
+  ├─ TensorForm:              0.1.0-alpha.1
+  ├─ Python:                  3.11.15
+  ├─ PyTorch:                 2.12.0
+  └─ NumPy:                   2.4.6
+---------------------------------------------------------------------------
+ DATASET:
+  ├─ Source:                  /Users/augustocamargo/Projects/MelFTF/dataset/celeb_vox/wav
+  ├─ Files:                   50
+  ├─ Duration (s):            6.92 ± 3.04
+  └─ Size (float32):          432.6 KB ± 189.7 KB
+---------------------------------------------------------------------------
+ RUN CONFIGURATION:
+  ├─ n_fft:                   512
+  ├─ hop_length:              160
+  ├─ n_mels:                  26
+  ├─ iterations:              20
+  └─ warmup:                  5
+---------------------------------------------------------------------------
+ LATENCY RANKING (Mean ± SD, ms):
+  Baselines: STFT+Mel  |  TensorForm: Direct Mel Projection (no STFT)
+
+  1st  TensorForm MelT (MPS)               0.1904 ± 0.0180 ms
+  2nd  torchaudio (CPU fallback)           0.3283 ± 0.0434 ms  1.7x slower than 1st
+  3rd  nnAudio (CPU fallback)              0.7520 ± 0.0576 ms  3.9x slower than 1st
+  4th  librosa                             1.4050 ± 0.0351 ms  7.4x slower than 1st
+
+---------------------------------------------------------------------------
+ ENERGY EFFICIENCY (estimated per call):
+  Power model: MPS=15W  CPU=45W  CUDA=NVML-sampled
+
+  1st  TensorForm MelT (MPS)               2.8565 mJ
+  2nd  torchaudio (CPU fallback)          14.7747 mJ  5.2x more
+  3rd  nnAudio (CPU fallback)             33.8411 mJ  11.8x more
+  4th  librosa                            63.2232 mJ  22.1x more
+
+  Total energy gain (1st vs last): 22.1x
+===========================================================================
