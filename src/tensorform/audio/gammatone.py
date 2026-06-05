@@ -10,13 +10,15 @@ class GammatoneOperator:
     Hardware-Aligned Computational (HAC) of the Gammatone Filterbank.
 
     Models the basilar membrane's frequency selectivity using 4th-order
-    gammatone filters at ERB-scale spaced center frequencies. Precomputes
-    frequency-domain filter responses and reformulates sequential frame
-    filtering into a batched split-complex matmul.
+    gammatone filters at ERB-scale spaced center frequencies. The accelerated
+    path is backend-specific:
+
+    - **CUDA**: single complex GEMM (ZGEMM via cuBLAS) on the precomputed kernel.
+      Avoids 4× SGEMM + element-wise ops of the split-real path.
+    - **MPS / CPU**: split-complex float32 arithmetic (MPS has no complex matmul).
 
     Kernel impulse responses are computed in float64 for numerical accuracy, then
-    cast to float32 before storage. Both legacy and HAC paths apply identical
-    split-complex float32 arithmetic so fidelity comparisons are unbiased.
+    cast to float32 before storage.
     """
 
     _ORDER: int = 4
@@ -45,11 +47,17 @@ class GammatoneOperator:
         else:
             self.device = torch.device(device)
 
-        kernel = self._generate_kernel()
-        self._kernel_real_np = kernel.real  # (n_filters, n_fft//2+1) float32
+        kernel = self._generate_kernel()                              # (n_filters, n_fft//2+1) complex64
+        self._kernel_real_np = kernel.real
         self._kernel_imag_np = kernel.imag
-        self.kernel_real = torch.from_numpy(self._kernel_real_np).to(self.device)
-        self.kernel_imag = torch.from_numpy(self._kernel_imag_np).to(self.device)
+
+        if self.device.type == "cuda":
+            # ZGEMM path: store full complex kernel on device
+            self.kernel_complex = torch.from_numpy(kernel).to(self.device)
+        else:
+            # Split-real path: MPS / CPU
+            self.kernel_real = torch.from_numpy(self._kernel_real_np).to(self.device)
+            self.kernel_imag = torch.from_numpy(self._kernel_imag_np).to(self.device)
 
     def _erb_spaced_freqs(self) -> np.ndarray:
         """ERB-scale linearly spaced center frequencies between f_min and f_max."""
@@ -80,9 +88,7 @@ class GammatoneOperator:
         return kernel
 
     def legacy_reference(self, signal: np.ndarray) -> np.ndarray:
-        """
-        Baseline CPU execution: frame-by-frame split-complex gammatone filtering.
-        """
+        """Baseline CPU: frame-by-frame split-complex gammatone filtering."""
         signal = signal.astype(np.float32)
         num_frames = 1 + (len(signal) - self.n_fft) // self.hop_length
         output = np.zeros((num_frames, self.n_filters), dtype=np.float32)
@@ -100,7 +106,10 @@ class GammatoneOperator:
 
     def accelerate(self, signal_tensor: torch.Tensor) -> torch.Tensor:
         """
-        Executes parallelized hardware-aligned gammatone filterbank computation.
+        Executes hardware-specific gammatone filterbank computation.
+
+        CUDA: kernel_complex @ stft — single ZGEMM (cuBLAS).
+        MPS/CPU: split-complex float32 matmul.
         """
         if signal_tensor.dim() > 1:
             signal_tensor = signal_tensor.squeeze(0)
@@ -114,12 +123,17 @@ class GammatoneOperator:
             return_complex=True,
         )
         # stft_out: (n_fft//2+1, n_frames)
-        Xr, Xi = stft_out.real, stft_out.imag
 
-        out_real = self.kernel_real @ Xr - self.kernel_imag @ Xi  # (n_filters, n_frames)
-        out_imag = self.kernel_real @ Xi + self.kernel_imag @ Xr
-
-        return torch.sqrt(out_real ** 2 + out_imag ** 2).T          # (n_frames, n_filters)
+        if self.device.type == "cuda":
+            # Single ZGEMM
+            out = self.kernel_complex @ stft_out                     # (n_filters, n_frames) complex
+            return torch.abs(out).T                                  # (n_frames, n_filters)
+        else:
+            # Split-real: MPS / CPU — K @ X = (kr·Xr - ki·Xi, kr·Xi + ki·Xr)
+            Xr, Xi = stft_out.real, stft_out.imag
+            out_real = self.kernel_real @ Xr - self.kernel_imag @ Xi
+            out_imag = self.kernel_real @ Xi + self.kernel_imag @ Xr
+            return torch.sqrt(out_real ** 2 + out_imag ** 2).T
 
 
 def gammatone(

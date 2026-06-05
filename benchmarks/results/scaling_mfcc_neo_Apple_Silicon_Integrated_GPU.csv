@@ -1,0 +1,28 @@
+timestamp,operator,duration_s,implementation,device,accel,hostname,tf_version,torch_version,mean_ms,speedup_vs_tf,is_tf,n_fft,hop_length,iterations,warmup
+2026-06-04 22:33:52 -03,mfcc,1,librosa (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.583122,2.3377,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,1,torchaudio (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.302542,1.2128,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,1,TensorForm MFCCT (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.249447,1.0,1,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,3,librosa (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,1.037553,4.0736,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,3,torchaudio (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.326866,1.2833,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,3,TensorForm MFCCT (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.254701,1.0,1,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,5,librosa (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,1.856793,7.057,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,5,torchaudio (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.38847,1.4764,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,5,TensorForm MFCCT (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.263115,1.0,1,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,10,librosa (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,2.912265,9.4677,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,10,torchaudio (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.580788,1.8881,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,10,TensorForm MFCCT (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.307599,1.0,1,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,20,librosa (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,5.433606,15.0035,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,20,torchaudio (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.901286,2.4887,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,20,TensorForm MFCCT (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.362156,1.0,1,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,40,librosa (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,9.775272,19.2356,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,40,torchaudio (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,1.82236,3.586,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,40,TensorForm MFCCT (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.508186,1.0,1,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,60,librosa (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,13.941967,20.6479,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,60,torchaudio (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,2.820038,4.1764,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,60,TensorForm MFCCT (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.675226,1.0,1,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,80,librosa (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,18.547802,22.6309,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,80,torchaudio (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,4.19608,5.1198,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,80,TensorForm MFCCT (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.819578,1.0,1,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,160,librosa (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,43.109964,30.0509,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,160,torchaudio (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,11.311663,7.8851,0,512,160,20,5
+2026-06-04 22:33:52 -03,mfcc,160,TensorForm MFCCT (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,1.434564,1.0,1,512,160,20,5

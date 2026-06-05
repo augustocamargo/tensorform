@@ -8,25 +8,28 @@ TensorForm replaces conventional DSP sequential loops with parallelized tensor g
 
 ## Why TensorForm
 
-Classical signal-processing libraries were designed for single-core CPUs. Every operator — FFT windowing, filter bank convolution, spectral aggregation — executes frame by frame in a sequential loop. Modern hardware accelerators cannot leverage this pattern.
+Classical signal-processing libraries were designed for single-core CPUs. Every operator executes frame by frame in a sequential loop. Modern hardware accelerators cannot leverage this pattern.
 
-TensorForm reformulates each operator as a static tensor computation graph: batched matrix operations that map directly onto the parallel execution model of GPU and NPU silicon. The legacy sequential implementation is preserved as a reference baseline for fidelity validation and benchmarking.
+TensorForm reformulates each operator as a static tensor computation graph: batched matrix operations that map directly onto the parallel execution model of GPU and NPU silicon. The legacy sequential path is preserved as a fidelity reference.
+
+The central example is **MelT** — a single-stage GEMM-native audio frontend that eliminates the conventional STFT entirely, replacing the two-step STFT+Mel pipeline with a direct Mel-spaced NDFT projection expressed as two dense matrix multiplications.
+
+> Camargo & Finger, *"MelT: GEMM-Native NDFT for Efficient Single-Stage Audio Frontends on Modern Accelerators"*, arXiv 2026.
 
 ---
 
 ## Features
 
-- **Accelerator-native** — auto-detects and targets MPS, CUDA, or CPU at runtime
-- **Fidelity-validated** — every operator ships with a telemetry harness that measures cosine similarity and L∞ error between the HAC and legacy paths
-- **Backend-agnostic API** — same call signature regardless of hardware
-- **Benchmark infrastructure** — multi-trial execution harness with mean ± SD latency, energy estimation, and environment metadata
+- **STFT-free Mel frontend** — Direct Mel Projection (MelT / MFCCT) eliminates intermediate spectral tensors
+- **Accelerator-native** — auto-detects MPS, CUDA, or CPU at runtime; priority: MPS → CUDA → CPU
+- **Fidelity-validated** — every operator ships with a harness measuring cosine similarity and L∞ error
+- **Competitive benchmarks** — built-in comparison against librosa, torchaudio, and nnAudio on real datasets
+- **Python ≥ 3.8 compatible** — tested on Apple Silicon (MPS) and NVIDIA (CUDA)
 - **Open source** — MIT licensed
 
 ---
 
 ## Installation
-
-**From source (development):**
 
 ```bash
 git clone https://github.com/augustocamargo/TensorForm.git
@@ -34,13 +37,17 @@ cd TensorForm
 pip install -e ".[dev]"
 ```
 
-**NVIDIA energy telemetry (optional):**
+Optional contenders for comparison benchmarks:
+
+```bash
+pip install librosa torchaudio nnAudio scipy
+```
+
+NVIDIA energy telemetry:
 
 ```bash
 pip install -e ".[nvidia]"
 ```
-
-**Runtime requirements:** Python ≥ 3.9, PyTorch ≥ 2.0, NumPy ≥ 1.22
 
 ---
 
@@ -52,11 +59,17 @@ import tensorform as tform
 
 signal = torch.randn(16000)  # 1-second mono audio at 16 kHz
 
-mel = tform.audio.melspectrogram(signal)
-# → Tensor of shape (97, 26) on the auto-detected accelerator
-```
+# Direct Mel Projection — no STFT, single-stage GEMM
+mel = tform.audio.melt(signal)                    # (98, 26) on MPS/CUDA/CPU
 
-Device selection is automatic: MPS → CUDA → CPU, in that priority order.
+# Cepstral extension
+mfcc = tform.audio.mfcct(signal)                  # (98, 13)
+
+# Conventional HAC operators
+mel_stft = tform.audio.melspectrogram(signal)     # STFT + Mel filterbank
+cqt      = tform.audio.cqt(signal)               # Freq-domain kernel matmul
+gamma    = tform.audio.gammatone(signal)          # Split-complex ERB matmul
+```
 
 ---
 
@@ -64,95 +77,62 @@ Device selection is automatic: MPS → CUDA → CPU, in that priority order.
 
 ### `tform.audio`
 
-| Operator | Description |
-|---|---|
-| `melspectrogram(signal, sample_rate, n_fft, hop_length, n_mels)` | HAC Mel Spectrogram |
+| Operator | Description | Approach |
+|---|---|---|
+| `melt(signal, ...)` | Direct Mel Projection | Two GEMMs — **no STFT** |
+| `mfcct(signal, ...)` | Direct Mel Projection + DCT-II | Three GEMMs — **no STFT** |
+| `melspectrogram(signal, ...)` | Mel Spectrogram | HAC STFT + mel matmul |
+| `mfcc(signal, ...)` | MFCC | HAC STFT + mel + DCT |
+| `cqt(signal, ...)` | Constant-Q Transform | Freq-domain kernel matmul |
+| `gammatone(signal, ...)` | Gammatone Filterbank | Split-complex ERB matmul |
 
 ---
 
-## Benchmarking
+## Benchmarks
 
-TensorForm ships a telemetry harness that profiles each operator against its legacy CPU reference across multiple trials, reporting execution latency, energy estimates, and mathematical fidelity.
-
-### Synthetic benchmark
-
-```python
-import numpy as np
-import tensorform as tform
-
-trials = [
-    np.random.uniform(-1.0, 1.0, 16000 * d).astype(np.float32)
-    for d in [1, 2, 3]
-]
-
-report = tform.bench.audio.melspectrogram(
-    inputs=trials,
-    iterations=50,
-    warmup=10,
-)
-
-report.print_summary("tform.audio.melspectrogram")
-```
-
-### Real dataset benchmark
-
-```python
-trials = tform.bench.audio.collect_wav_trials(
-    root_dir="/path/to/wav/dataset",
-    max_files=100,
-    target_sr=16000,
-)
-
-report = tform.bench.audio.melspectrogram(inputs=trials, iterations=20, warmup=5)
-report.print_summary("tform.audio.melspectrogram — CelebVox")
-```
-
-Pre-built benchmark scripts are in [`benchmarks/`](benchmarks/).
-
-### Sample report
+### Competitive comparison (Apple Silicon MPS, CelebVox)
 
 ```
-===========================================================================
- AGGREGATED BENCHMARK REPORT (50 Evaluation Trials)
- Operator: tform.audio.melspectrogram
-===========================================================================
- SYSTEM ENVIRONMENT METADATA:
-  ├─ Timestamp:               2026-06-03 14:22:01
-  ├─ Host CPU Model:          Apple M2 Pro (12 Cores)
-  └─ Target Accelerator:      Apple Silicon Integrated GPU
----------------------------------------------------------------------------
- EXECUTION LATENCY (Cross-Trial Mean ± SD):
-  ├─ Legacy CPU Reference:    8.4231 ± 0.21 ms
-  ├─ Accelerator-Native:      0.9184 ± 0.04 ms
-  └─ Sustained Speedup:       9.17x
----------------------------------------------------------------------------
- ENERGY EFFICIENCY (Mean per Trial):
-  ├─ Legacy CPU Reference:    0.3790 mJ
-  ├─ Accelerator-Native:      0.0138 mJ
-  └─ Energy Efficiency Gain:  27.46x less energy consumed
----------------------------------------------------------------------------
- MATHEMATICAL FIDELITY ACCUMULATED:
-  ├─ Mean Cosine Similarity:  1.00000000
-  └─ Worst-Case Abs Error:    3.66210938e-04
-===========================================================================
+tform.audio.melt  vs  librosa / torchaudio / nnAudio
+─────────────────────────────────────────────────────
+1st  TensorForm MelT  (MPS)     0.207 ms  —
+2nd  torchaudio       (MPS)     0.384 ms  1.9x slower
+3rd  nnAudio          (CPU)     1.318 ms  6.4x slower  ← no MPS support
+4th  librosa          (CPU)     1.462 ms  7.1x slower
+
+tform.audio.cqt  vs  librosa / nnAudio
+─────────────────────────────────────────────────────
+1st  TensorForm CQT   (MPS)     0.498 ms  —
+2nd  nnAudio CQT      (CPU)     2.346 ms  4.7x slower  ← no MPS support
+3rd  librosa CQT      (CPU)     5.158 ms  10.3x slower
 ```
+
+### Running benchmarks
+
+```bash
+# Single operator vs all contenders
+python benchmarks/audio/bench_mel.py --dataset /path/to/wav
+python benchmarks/audio/bench_mfcc.py
+python benchmarks/audio/bench_cqt.py
+python benchmarks/audio/bench_gammatone.py
+
+# All operators at once
+python benchmarks/audio/run_all.py --dataset /path/to/wav
+
+# Generate a fixed-duration dataset
+python benchmarks/tools/gen_dataset.py --src /path/to/wav --dst /path/to/out \
+    --n-files 100 --duration 160
+```
+
+Results are saved to `benchmarks/results/bench_{operator}_{hostname}_{device}.txt`.
 
 ---
 
 ## Namespace Conventions
 
-TensorForm follows a strict two-root namespace:
-
 ```
 tform.<domain>.<operator>          # production operator
-tform.bench.<domain>.<operator>    # telemetry harness (mirrors production)
-```
-
-Example:
-
-```
-tform.audio.melspectrogram         # HAC production call
-tform.bench.audio.melspectrogram   # benchmark + fidelity report
+tform.bench.<domain>.<operator>    # fidelity harness (mirrors production)
 ```
 
 ---
@@ -167,19 +147,25 @@ pytest tests/
 
 ## Roadmap
 
-- `tform.audio` — Mel Spectrogram ✅, MFCC, CQT, Gammatone
-- `tform.radar` — Range-Doppler map, CFAR detection
-- `tform.io` — Dataset loaders and resampling utilities
+**`tform.audio`**
+- MelT / MFCCT (Direct Mel Projection) ✅
+- Mel Spectrogram ✅
+- MFCC ✅
+- CQT ✅
+- Gammatone ✅
+- MFCC sweep over Mel bins *(planned)*
+
+**`tform.radar`** — Range-Doppler map, CFAR detection *(planned)*
 
 ---
 
 ## Contributing
 
-Contributions are welcome. Please open an issue before submitting a pull request for new operators or backend changes. All operators must include:
+All operators must include:
 
 1. A production implementation under `tform.<domain>.<operator>`
-2. A mirrored telemetry harness under `tform.bench.<domain>.<operator>`
-3. A unit test validating fidelity between the two paths
+2. A mirrored fidelity harness under `tform.bench.<domain>.<operator>`
+3. A unit test validating equivalence between the two paths
 
 ---
 

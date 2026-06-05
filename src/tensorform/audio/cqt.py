@@ -10,11 +10,13 @@ class CQTOperator:
     Hardware-Aligned Computational (HAC) of the Constant-Q Transform.
 
     Precomputes geometrically-spaced, Hann-windowed complex sinusoid kernels
-    in the frequency domain. Reformulates frame-by-frame filtering into a
-    single batched split-complex matmul across all STFT frames.
+    in the frequency domain. The accelerated path is backend-specific:
 
-    Both legacy and HAC paths use identical split-complex float32 arithmetic
-    to ensure fidelity comparisons are not biased by dtype differences.
+    - **CUDA**: single complex GEMM (ZGEMM via cuBLAS) on the conjugate kernel.
+      Avoids 4× SGEMM + element-wise ops of the split-real path.
+    - **MPS / CPU**: split-complex float32 arithmetic (MPS has no complex matmul).
+
+    Legacy reference uses split-real on CPU for all platforms.
     """
 
     def __init__(
@@ -33,8 +35,6 @@ class CQTOperator:
         self.bins_per_octave = bins_per_octave
         self.f_min = f_min
         self.Q = filter_scale / (2.0 ** (1.0 / bins_per_octave) - 1.0)
-
-        # n_fft: smallest power of 2 ≥ longest filter (at f_min)
         self.n_fft = int(2 ** np.ceil(np.log2(self.Q * sample_rate / f_min)))
 
         if device is None:
@@ -42,18 +42,24 @@ class CQTOperator:
         else:
             self.device = torch.device(device)
 
-        kernel = self._generate_kernel()
-        self._kernel_real_np = kernel.real  # (n_bins, n_fft//2+1) float32
+        kernel = self._generate_kernel()                              # (n_bins, n_fft//2+1) complex64
+        self._kernel_real_np = kernel.real
         self._kernel_imag_np = kernel.imag
-        self.kernel_real = torch.from_numpy(self._kernel_real_np).to(self.device)
-        self.kernel_imag = torch.from_numpy(self._kernel_imag_np).to(self.device)
+
+        if self.device.type == "cuda":
+            # ZGEMM path: store full complex kernel on device
+            self.kernel_complex = torch.from_numpy(kernel).to(self.device)
+        else:
+            # Split-real path: MPS / CPU
+            self.kernel_real = torch.from_numpy(self._kernel_real_np).to(self.device)
+            self.kernel_imag = torch.from_numpy(self._kernel_imag_np).to(self.device)
 
     def _generate_kernel(self) -> np.ndarray:
         """
         CQT filter bank in frequency domain, shape (n_bins, n_fft//2+1) complex64.
 
-        Each row is the DFT of a Hann-windowed complex sinusoid tuned to the
-        corresponding geometrically spaced center frequency.
+        Each row is the DFT of a Hann-windowed complex sinusoid at the
+        corresponding geometrically spaced center frequency, normalized by n_fft.
         """
         kernel = np.zeros((self.n_bins, self.n_fft // 2 + 1), dtype=np.complex64)
         for k in range(self.n_bins):
@@ -62,49 +68,34 @@ class CQTOperator:
             n = np.arange(N_k, dtype=np.float32)
             window = np.hanning(N_k).astype(np.float32)
             basis = (window * np.exp(2j * np.pi * self.Q * n / N_k) / N_k).astype(np.complex64)
-            # basis is complex — full FFT, take positive-frequency half, normalize by n_fft
             kernel[k] = (
                 np.fft.fft(basis, n=self.n_fft)[: self.n_fft // 2 + 1] * (2.0 / self.n_fft)
             ).astype(np.complex64)
         return kernel
 
-    def _apply_kernel(
-        self,
-        kr: np.ndarray,
-        ki: np.ndarray,
-        X_real: np.ndarray,
-        X_imag: np.ndarray,
-    ) -> np.ndarray:
-        """Split-complex matmul: |conj(K) @ X| = |(kr - i·ki) @ (Xr + i·Xi)|.
-
-        CQT analysis requires the conjugate of the synthesis kernel so that
-        the filter responses align with positive-frequency signal content.
-        """
-        out_real = kr @ X_real + ki @ X_imag
-        out_imag = kr @ X_imag - ki @ X_real
-        return np.sqrt(out_real ** 2 + out_imag ** 2)
-
     def legacy_reference(self, signal: np.ndarray) -> np.ndarray:
-        """
-        Baseline CPU execution: frame-by-frame split-complex CQT filtering.
-        """
+        """Baseline CPU: frame-by-frame split-complex CQT filtering."""
         signal = signal.astype(np.float32)
         num_frames = 1 + (len(signal) - self.n_fft) // self.hop_length
         output = np.zeros((num_frames, self.n_bins), dtype=np.float32)
+        kr, ki = self._kernel_real_np, self._kernel_imag_np
 
         for i in range(num_frames):
             start = i * self.hop_length
             X = np.fft.rfft(signal[start:start + self.n_fft]).astype(np.complex64)
-            output[i] = self._apply_kernel(
-                self._kernel_real_np, self._kernel_imag_np,
-                X.real, X.imag,
-            ).astype(np.float32)
+            # conj(K) @ X: (kr - i·ki)(Xr + i·Xi)
+            out_real = kr @ X.real + ki @ X.imag
+            out_imag = kr @ X.imag - ki @ X.real
+            output[i] = np.sqrt(out_real ** 2 + out_imag ** 2).astype(np.float32)
 
         return output
 
     def accelerate(self, signal_tensor: torch.Tensor) -> torch.Tensor:
         """
-        Executes parallelized hardware-aligned CQT computation graph.
+        Executes hardware-specific CQT computation.
+
+        CUDA: conj(kernel_complex) @ stft  — single ZGEMM (cuBLAS).
+        MPS/CPU: split-complex float32 matmul.
         """
         if signal_tensor.dim() > 1:
             signal_tensor = signal_tensor.squeeze(0)
@@ -118,13 +109,17 @@ class CQTOperator:
             return_complex=True,
         )
         # stft_out: (n_fft//2+1, n_frames)
-        Xr, Xi = stft_out.real, stft_out.imag
 
-        # conj(K) @ X: (kr - i·ki)(Xr + i·Xi)
-        out_real = self.kernel_real @ Xr + self.kernel_imag @ Xi  # (n_bins, n_frames)
-        out_imag = self.kernel_real @ Xi - self.kernel_imag @ Xr
-
-        return torch.sqrt(out_real ** 2 + out_imag ** 2).T          # (n_frames, n_bins)
+        if self.device.type == "cuda":
+            # Single ZGEMM — conj(K) is the analysis kernel
+            out = torch.conj(self.kernel_complex) @ stft_out        # (n_bins, n_frames) complex
+            return torch.abs(out).T                                  # (n_frames, n_bins)
+        else:
+            # Split-real: MPS / CPU — conj(K) @ X = (kr+ki·Xi, kr·Xi-ki·Xr)
+            Xr, Xi = stft_out.real, stft_out.imag
+            out_real = self.kernel_real @ Xr + self.kernel_imag @ Xi
+            out_imag = self.kernel_real @ Xi - self.kernel_imag @ Xr
+            return torch.sqrt(out_real ** 2 + out_imag ** 2).T
 
 
 def cqt(

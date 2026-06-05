@@ -1,0 +1,19 @@
+timestamp,operator,duration_s,implementation,device,accel,hostname,tf_version,torch_version,mean_ms,speedup_vs_tf,is_tf,n_fft,hop_length,iterations,warmup
+2026-06-04 01:19:50 UTC,gammatone,1,TF legacy (CPU),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,3.116746,45.793,0,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,1,TensorForm (CUDA),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,0.068062,1.0,1,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,3,TF legacy (CPU),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,9.631174,140.5321,0,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,3,TensorForm (CUDA),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,0.068534,1.0,1,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,5,TF legacy (CPU),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,16.172534,235.9734,0,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,5,TensorForm (CUDA),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,0.068535,1.0,1,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,10,TF legacy (CPU),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,32.625653,478.5271,0,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,10,TensorForm (CUDA),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,0.068179,1.0,1,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,20,TF legacy (CPU),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,65.224621,967.0529,0,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,20,TensorForm (CUDA),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,0.067447,1.0,1,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,40,TF legacy (CPU),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,130.860282,1863.9189,0,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,40,TensorForm (CUDA),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,0.070207,1.0,1,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,60,TF legacy (CPU),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,196.747334,2616.1892,0,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,60,TensorForm (CUDA),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,0.075204,1.0,1,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,80,TF legacy (CPU),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,261.593818,3086.3357,0,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,80,TensorForm (CUDA),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,0.084759,1.0,1,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,160,TF legacy (CPU),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,524.219405,3843.1091,0,512,160,20,5
+2026-06-04 01:19:50 UTC,gammatone,160,TensorForm (CUDA),cuda,NVIDIA H100 80GB HBM3,power,0.2.0-alpha.1,2.5.1+cu121,0.136405,1.0,1,512,160,20,5

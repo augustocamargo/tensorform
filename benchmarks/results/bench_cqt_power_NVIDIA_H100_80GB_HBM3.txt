@@ -1,0 +1,49 @@
+
+===========================================================================
+ BENCHMARK — tform.audio.cqt  (Frequency-Domain Kernel Matmul)
+===========================================================================
+ SYSTEM ENVIRONMENT:
+  ├─ Hostname:                power
+  ├─ Started:                 2026-06-03 23:23:08 UTC
+  ├─ Finished:                2026-06-03 23:26:19 UTC
+  ├─ Timezone:                UTC (UTC+0000)
+  ├─ OS:                      Linux 6.2.0-37-generic
+  ├─ CPU:                     x86_64 (16 Cores)
+  ├─ Accelerator:             NVIDIA H100 80GB HBM3
+  ├─ TensorForm:              0.2.0-alpha.1
+  ├─ Python:                  3.11.10
+  ├─ PyTorch:                 2.5.1+cu121
+  └─ NumPy:                   1.26.2
+---------------------------------------------------------------------------
+ DATASET:
+  ├─ Source:                  /work/ms/datasets/Libri6000_100_160
+  ├─ Files:                   100
+  ├─ Duration (s):            160.00 ± 0.00
+  └─ Size (float32):          9.77 MB ± 0 B
+---------------------------------------------------------------------------
+ RUN CONFIGURATION:
+  ├─ n_bins:         60
+  ├─ bins_per_octave:12
+  ├─ f_min:          130.8 Hz
+  ├─ hop_length:     512
+  ├─ n_fft (auto):   4096
+  ├─ iterations:     20
+  └─ warmup:         5
+---------------------------------------------------------------------------
+ LATENCY RANKING (Mean ± SD, ms):
+  Baselines: variable-window / 1D conv  |  TensorForm: static freq-domain matmul
+
+  1st  TensorForm CQT   (CUDA)                 0.2682 ± 0.0027 ms
+  2nd  nnAudio CQT      (CUDA)                 0.6086 ± 0.0048 ms  2.3x slower than 1st
+  3rd  librosa CQT      (CPU)                 73.0190 ± 1.0186 ms  272.3x slower than 1st
+
+---------------------------------------------------------------------------
+ ENERGY EFFICIENCY (estimated per call):
+  Power model: MPS=15W  CPU=45W  CUDA=NVML-sampled
+
+  1st  TensorForm CQT   (CUDA)                12.0690 mJ
+  2nd  nnAudio CQT      (CUDA)                27.3879 mJ  2.3x more
+  3rd  librosa CQT      (CPU)                3285.8544 mJ  272.3x more
+
+  Total energy gain (1st vs last): 272.3x
+===========================================================================

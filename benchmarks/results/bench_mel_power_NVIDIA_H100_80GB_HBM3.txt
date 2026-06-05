@@ -1,0 +1,49 @@
+
+===========================================================================
+ BENCHMARK — tform.audio.melt  (Direct Mel Projection)
+===========================================================================
+ SYSTEM ENVIRONMENT:
+  ├─ Hostname:                power
+  ├─ Started:                 2026-06-03 23:19:09 UTC
+  ├─ Finished:                2026-06-03 23:21:04 UTC
+  ├─ Timezone:                UTC (UTC+0000)
+  ├─ OS:                      Linux 6.2.0-37-generic
+  ├─ CPU:                     x86_64 (16 Cores)
+  ├─ Accelerator:             NVIDIA H100 80GB HBM3
+  ├─ TensorForm:              0.2.0-alpha.1
+  ├─ Python:                  3.11.10
+  ├─ PyTorch:                 2.5.1+cu121
+  └─ NumPy:                   1.26.2
+---------------------------------------------------------------------------
+ DATASET:
+  ├─ Source:                  /work/ms/datasets/Libri6000_100_160
+  ├─ Files:                   100
+  ├─ Duration (s):            160.00 ± 0.00
+  └─ Size (float32):          9.77 MB ± 0 B
+---------------------------------------------------------------------------
+ RUN CONFIGURATION:
+  ├─ n_fft:          512
+  ├─ hop_length:     160
+  ├─ n_mels:         26
+  ├─ iterations:     20
+  └─ warmup:         5
+---------------------------------------------------------------------------
+ LATENCY RANKING (Mean ± SD, ms):
+  Baselines: STFT+Mel  |  TensorForm: Direct Mel Projection (no STFT)
+
+  1st  TensorForm MelT  (CUDA)                 0.1344 ± 0.0016 ms
+  2nd  torchaudio       (CUDA)                 0.1557 ± 0.0047 ms  1.2x slower than 1st
+  3rd  nnAudio          (CUDA)                 1.2159 ± 0.0080 ms  9.0x slower than 1st
+  4th  librosa          (CPU)                 41.9305 ± 0.3468 ms  311.9x slower than 1st
+
+---------------------------------------------------------------------------
+ ENERGY EFFICIENCY (estimated per call):
+  Power model: MPS=15W  CPU=45W  CUDA=NVML-sampled
+
+  1st  TensorForm MelT  (CUDA)                 6.0497 mJ
+  2nd  torchaudio       (CUDA)                 7.0083 mJ  1.2x more
+  3rd  nnAudio          (CUDA)                54.7157 mJ  9.0x more
+  4th  librosa          (CPU)                1886.8711 mJ  311.9x more
+
+  Total energy gain (1st vs last): 311.9x
+===========================================================================

@@ -1,0 +1,113 @@
+# TensorForm scaling study — source file log
+# Operator:   gammatone
+# Timestamp:  2026-06-04 21:43:13 -03
+# Hostname:   newton
+# Accelerator:Apple Silicon Integrated GPU
+# Dataset:    /Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160
+# max-files:  100
+# n_files:    100
+# Durations:  [1, 3, 5, 10, 20, 40, 60, 80, 160]
+#
+# All files were loaded once and truncated to each duration point.
+# Same file list and same truncation used for ALL implementations.
+#
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0000.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0001.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0002.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0003.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0004.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0005.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0006.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0007.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0008.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0009.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0010.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0011.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0012.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0013.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0014.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0015.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0016.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0017.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0018.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0019.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0020.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0021.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0022.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0023.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0024.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0025.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0026.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0027.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0028.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0029.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0030.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0031.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0032.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0033.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0034.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0035.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0036.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0037.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0038.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0039.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0040.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0041.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0042.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0043.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0044.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0045.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0046.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0047.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0048.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0049.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0050.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0051.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0052.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0053.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0054.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0055.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0056.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0057.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0058.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0059.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0060.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0061.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0062.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0063.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0064.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0065.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0066.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0067.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0068.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0069.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0070.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0071.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0072.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0073.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0074.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0075.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0076.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0077.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0078.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0079.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0080.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0081.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0082.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0083.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0084.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0085.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0086.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0087.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0088.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0089.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0090.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0091.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0092.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0093.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0094.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0095.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0096.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0097.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0098.wav
+/Users/augustocamargo/Projects/MelFTF/dataset/Libri6000_100_160/0099.wav

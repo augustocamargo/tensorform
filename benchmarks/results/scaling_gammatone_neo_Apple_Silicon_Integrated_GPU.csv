@@ -1,0 +1,19 @@
+timestamp,operator,duration_s,implementation,device,accel,hostname,tf_version,torch_version,mean_ms,speedup_vs_tf,is_tf,n_fft,hop_length,iterations,warmup
+2026-06-05 00:02:38 -03,gammatone,1,TF legacy (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,4.308843,14.3516,0,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,1,TensorForm (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.300233,1.0,1,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,3,TF legacy (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,12.178016,35.9571,0,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,3,TensorForm (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.338682,1.0,1,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,5,TF legacy (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,20.05641,46.4318,0,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,5,TensorForm (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.431954,1.0,1,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,10,TF legacy (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,39.948959,63.1669,0,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,10,TensorForm (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,0.632435,1.0,1,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,20,TF legacy (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,79.783511,76.8619,0,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,20,TensorForm (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,1.038011,1.0,1,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,40,TF legacy (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,159.749906,79.6773,0,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,40,TensorForm (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,2.004962,1.0,1,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,60,TF legacy (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,239.518014,67.5851,0,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,60,TensorForm (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,3.543949,1.0,1,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,80,TF legacy (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,319.168198,59.7755,0,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,80,TensorForm (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,5.339451,1.0,1,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,160,TF legacy (CPU),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,637.249442,55.1877,0,512,160,20,5
+2026-06-05 00:02:38 -03,gammatone,160,TensorForm (MPS),mps,Apple Silicon Integrated GPU,neo,0.2.0-alpha.1,2.12.0,11.546941,1.0,1,512,160,20,5

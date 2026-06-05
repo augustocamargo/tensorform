@@ -1,0 +1,28 @@
+timestamp,operator,duration_s,implementation,device,accel,hostname,tf_version,torch_version,mean_ms,speedup_vs_tf,is_tf,n_fft,hop_length,iterations,warmup
+2026-06-04 00:26:28 UTC,mfcc,1,librosa (CPU),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,2.331403,10.9031,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,1,torchaudio (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.536887,2.5108,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,1,TensorForm MFCCT (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.21383,1.0,1,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,3,librosa (CPU),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,3.878773,18.0,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,3,torchaudio (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.53507,2.4831,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,3,TensorForm MFCCT (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.215488,1.0,1,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,5,librosa (CPU),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,5.375963,24.8607,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,5,torchaudio (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.539285,2.4939,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,5,TensorForm MFCCT (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.216243,1.0,1,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,10,librosa (CPU),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,9.132832,41.4549,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,10,torchaudio (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.541989,2.4601,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,10,TensorForm MFCCT (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.220307,1.0,1,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,20,librosa (CPU),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,16.661722,75.5886,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,20,torchaudio (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.538956,2.4451,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,20,TensorForm MFCCT (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.220426,1.0,1,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,40,librosa (CPU),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,31.64604,151.3666,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,40,torchaudio (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.534641,2.5572,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,40,TensorForm MFCCT (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.209069,1.0,1,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,60,librosa (CPU),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,48.171793,232.3227,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,60,torchaudio (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.553874,2.6712,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,60,TensorForm MFCCT (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.207349,1.0,1,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,80,librosa (CPU),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,64.573432,271.4934,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,80,torchaudio (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.560164,2.3552,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,80,TensorForm MFCCT (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.237845,1.0,1,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,160,librosa (CPU),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,129.981066,338.5346,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,160,torchaudio (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.588955,1.5339,0,512,160,20,5
+2026-06-04 00:26:28 UTC,mfcc,160,TensorForm MFCCT (CUDA),cuda,Tesla V100-SXM2-32GB,tossal,0.2.0-alpha.1,2.3.1+cu121,0.383952,1.0,1,512,160,20,5

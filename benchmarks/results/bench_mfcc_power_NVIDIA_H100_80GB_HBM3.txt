@@ -1,0 +1,48 @@
+
+===========================================================================
+ BENCHMARK — tform.audio.mfcct  (Direct Mel Projection + DCT)
+===========================================================================
+ SYSTEM ENVIRONMENT:
+  ├─ Hostname:                power
+  ├─ Started:                 2026-06-03 23:21:05 UTC
+  ├─ Finished:                2026-06-03 23:23:06 UTC
+  ├─ Timezone:                UTC (UTC+0000)
+  ├─ OS:                      Linux 6.2.0-37-generic
+  ├─ CPU:                     x86_64 (16 Cores)
+  ├─ Accelerator:             NVIDIA H100 80GB HBM3
+  ├─ TensorForm:              0.2.0-alpha.1
+  ├─ Python:                  3.11.10
+  ├─ PyTorch:                 2.5.1+cu121
+  └─ NumPy:                   1.26.2
+---------------------------------------------------------------------------
+ DATASET:
+  ├─ Source:                  /work/ms/datasets/Libri6000_100_160
+  ├─ Files:                   100
+  ├─ Duration (s):            160.00 ± 0.00
+  └─ Size (float32):          9.77 MB ± 0 B
+---------------------------------------------------------------------------
+ RUN CONFIGURATION:
+  ├─ n_fft:          512
+  ├─ hop_length:     160
+  ├─ n_mels:         26
+  ├─ n_mfcc:         13
+  ├─ iterations:     20
+  └─ warmup:         5
+---------------------------------------------------------------------------
+ LATENCY RANKING (Mean ± SD, ms):
+  Baselines: STFT+Mel+DCT  |  TensorForm: Direct Mel Projection + DCT (no STFT)
+
+  1st  TensorForm MFCCT (CUDA)                 0.1406 ± 0.0022 ms
+  2nd  torchaudio       (CUDA)                 0.1944 ± 0.0077 ms  1.4x slower than 1st
+  3rd  librosa          (CPU)                 45.8819 ± 0.8834 ms  326.3x slower than 1st
+
+---------------------------------------------------------------------------
+ ENERGY EFFICIENCY (estimated per call):
+  Power model: MPS=15W  CPU=45W  CUDA=NVML-sampled
+
+  1st  TensorForm MFCCT (CUDA)                 6.3279 mJ
+  2nd  torchaudio       (CUDA)                 8.7479 mJ  1.4x more
+  3rd  librosa          (CPU)                2064.6863 mJ  326.3x more
+
+  Total energy gain (1st vs last): 326.3x
+===========================================================================
